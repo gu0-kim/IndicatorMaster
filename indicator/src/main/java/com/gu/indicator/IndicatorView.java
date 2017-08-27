@@ -3,6 +3,7 @@ package com.gu.indicator;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -18,8 +19,8 @@ import android.widget.Scroller;
  * @since 2017/7/9
  */
 public class IndicatorView extends View {
-    private static final int NUM = 3;
-    private static final int MARGIN = 80;
+    private int num;
+    private int margin;
     private int itemWidth, indicatorWidth, itemHeight;
     private int mPos = 0;
     private float percent;
@@ -27,23 +28,28 @@ public class IndicatorView extends View {
     private Scroller mScroller;
     private boolean animMoveFlag, noAnimMoveFlag;
     private static final String TAG = "TAG";
-    private static final int RD = 10;
+    private int rd;
     private RectF mRect;
 
-    public IndicatorView(Context context, AttributeSet set) {
-        super(context, set);
+    public IndicatorView(Context context, AttributeSet attrs) {
+        super(context, attrs);
         p = new Paint();
-        p.setColor(Color.RED);
         mScroller = new Scroller(context);
         mRect = new RectF();
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.IndicatorView);
+        num = a.getInt(R.styleable.IndicatorView_num, 4);
+        rd = a.getInt(R.styleable.IndicatorView_rd, 10);
+        margin = a.getDimensionPixelOffset(R.styleable.IndicatorView_margin, 80);
+        p.setColor(a.getColor(R.styleable.indicatorStyle_bg_color, Color.RED));
+        a.recycle();
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        itemWidth = MeasureSpec.getSize(widthMeasureSpec) / NUM;
+        itemWidth = MeasureSpec.getSize(widthMeasureSpec) / num;
         itemHeight = MeasureSpec.getSize(heightMeasureSpec);
-        indicatorWidth = itemWidth - 2 * MARGIN;
+        indicatorWidth = itemWidth - 2 * margin;
     }
 
     private void updateRect(RectF rect, float l, float t, float r, float b) {
@@ -59,17 +65,17 @@ public class IndicatorView extends View {
         if (animMoveFlag) {
             if (mScroller.computeScrollOffset()) {
                 updateRect(mRect, mScroller.getCurrX(), 0, mScroller.getCurrX() + indicatorWidth, getHeight());
-                canvas.drawRoundRect(mRect, RD, RD, p);
+                canvas.drawRoundRect(mRect, rd, rd, p);
                 postInvalidate();
             } else {
-                updateRect(mRect, mPos * itemWidth + MARGIN, 0, mPos * itemWidth + MARGIN + indicatorWidth, getHeight());
-                canvas.drawRoundRect(mRect, RD, RD, p);
+                updateRect(mRect, mPos * itemWidth + margin, 0, mPos * itemWidth + margin + indicatorWidth, getHeight());
+                canvas.drawRoundRect(mRect, rd, rd, p);
                 animMoveFlag = false;
             }
         } else if (noAnimMoveFlag) {
             noAnimMoveFlag = false;
-            updateRect(mRect, mPos * itemWidth + MARGIN, 0, mPos * itemWidth + MARGIN + indicatorWidth, getHeight());
-            canvas.drawRoundRect(mRect, RD, RD, p);
+            updateRect(mRect, mPos * itemWidth + margin, 0, mPos * itemWidth + margin + indicatorWidth, getHeight());
+            canvas.drawRoundRect(mRect, rd, rd, p);
         } else {
             drawRect(canvas, percent);
         }
@@ -81,34 +87,34 @@ public class IndicatorView extends View {
      */
     public void drawRect(Canvas canvas, float percent) {
         if (percent >= -1f && percent <= -0.5f) {
-            updateRect(mRect, getPreLeft(), 0, (int) (getPreLeft() + 2 * itemWidth * (1.5f + percent) - 2 * MARGIN), itemHeight);
-            canvas.drawRoundRect(mRect, RD, RD, p);
+            updateRect(mRect, getPreLeft(), 0, (int) (getPreLeft() + 2 * itemWidth * (1.5f + percent) - 2 * margin), itemHeight);
+            canvas.drawRoundRect(mRect, rd, rd, p);
         } else if (percent > -0.5f && percent <= 0f) {
-            updateRect(mRect, (int) (getCurRight() - itemWidth * (1f - 2 * percent) + 2 * MARGIN), 0, getCurRight(), itemHeight);
-            canvas.drawRoundRect(mRect, RD, RD, p);
+            updateRect(mRect, (int) (getCurRight() - itemWidth * (1f - 2 * percent) + 2 * margin), 0, getCurRight(), itemHeight);
+            canvas.drawRoundRect(mRect, rd, rd, p);
         } else if (percent > 0f && percent <= 0.5f) {
-            updateRect(mRect, getCurLeft(), 0, getCurLeft() + (int) (itemWidth * (1f + 2 * percent)) - 2 * MARGIN, itemHeight);
-            canvas.drawRoundRect(mRect, RD, RD, p);
+            updateRect(mRect, getCurLeft(), 0, getCurLeft() + (int) (itemWidth * (1f + 2 * percent)) - 2 * margin, itemHeight);
+            canvas.drawRoundRect(mRect, rd, rd, p);
         } else if (percent > 0.5f && percent <= 1f) {
-            updateRect(mRect, getNextRight() - (int) (2 * itemWidth * (1.5f - percent) - 2 * MARGIN), 0, getNextRight(), itemHeight);
-            canvas.drawRoundRect(mRect, RD, RD, p);
+            updateRect(mRect, getNextRight() - (int) (2 * itemWidth * (1.5f - percent) - 2 * margin), 0, getNextRight(), itemHeight);
+            canvas.drawRoundRect(mRect, rd, rd, p);
         }
     }
 
     private int getCurLeft() {
-        return mPos * itemWidth + MARGIN;
+        return mPos * itemWidth + margin;
     }
 
     private int getPreLeft() {
-        return (mPos - 1) * itemWidth + MARGIN;
+        return (mPos - 1) * itemWidth + margin;
     }
 
     private int getCurRight() {
-        return mPos * itemWidth + indicatorWidth + MARGIN;
+        return mPos * itemWidth + indicatorWidth + margin;
     }
 
     private int getNextRight() {
-        return (mPos + 1) * itemWidth + indicatorWidth + MARGIN;
+        return (mPos + 1) * itemWidth + indicatorWidth + margin;
     }
 
     public void setPercent(float percent) {
@@ -118,7 +124,7 @@ public class IndicatorView extends View {
 
     public void setCurrent(int pos) {
         animMoveFlag = true;
-        mScroller.startScroll(mPos * itemWidth + MARGIN, 0, (pos - mPos) * itemWidth, 0);
+        mScroller.startScroll(mPos * itemWidth + margin, 0, (pos - mPos) * itemWidth, 0);
         this.mPos = pos;
         postInvalidate();
     }

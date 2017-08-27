@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="num" format="integer"></attr>
+    <attr name="bg_color" format="color"></attr>
+    <attr name="margin" format="dimension"></attr>
+    <attr name="rd" format="dimension"></attr>
+
+    <declare-styleable name="IndicatorView">
+        <attr name="num"/>
+        <attr name="bg_color"/>
+        <attr name="margin"/>
+        <attr name="rd"/>
+    </declare-styleable>
+</resources>
