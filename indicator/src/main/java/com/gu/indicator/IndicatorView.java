@@ -40,7 +40,7 @@ public class IndicatorView extends View {
         num = a.getInt(R.styleable.IndicatorView_num, 4);
         rd = a.getInt(R.styleable.IndicatorView_rd, 10);
         margin = a.getDimensionPixelOffset(R.styleable.IndicatorView_margin, 80);
-        p.setColor(a.getColor(R.styleable.indicatorStyle_bg_color, Color.RED));
+        p.setColor(a.getColor(R.styleable.IndicatorView_bg_color, Color.RED));
         a.recycle();
     }
 
