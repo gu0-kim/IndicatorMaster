@@ -1,5 +1,3 @@
-import jdk.internal.dynalink.linker.LinkerServices
-
 apply plugin: 'com.android.application'
 
 android {
@@ -22,10 +20,18 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     implementation rootProject.ext.dependencies["appcompat-v7"]
     testImplementation rootProject.ext.dependencies["junit"]
+    implementation project(':indicator')
+
+    implementation rootProject.ext.dependencies["butterknife"]
+    annotationProcessor rootProject.ext.dependencies["butterknife-compiler"]
+
+    debugImplementation rootProject.ext.dependencies["leakcanary-android"]
+    releaseImplementation rootProject.ext.dependencies["leakcanary-android-no-op"]
 }
