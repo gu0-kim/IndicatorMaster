@@ -6,7 +6,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import com.gu.indicator.TabLayout;
 
@@ -14,7 +13,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
-  public static final String[] titles = {"第一页", "第二页", "第三页"};
+  private static final String[] titles = {"第一页", "第二页", "第三页"};
 
   @BindView(R.id.vp)
   ViewPager vp;
@@ -27,9 +26,9 @@ public class MainActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
     ButterKnife.bind(this);
-    mTabLayout.setTitles(titles);
-    Log.e("TAG", "onCreate:------------");
     vp.setAdapter(new PageAdapter(getSupportFragmentManager()));
+    // TabLayout使用
+    mTabLayout.setTitles(titles);
     mTabLayout.setViewPager(vp);
   }
 
