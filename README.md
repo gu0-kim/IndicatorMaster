@@ -1,12 +1,17 @@
+## dependencies
+```
+implementation 'com.gu:indicator:1.0.2'
+```
 ## 效果
+margin+圆角
 
 ![image](https://github.com/gu0-kim/IndicatorMaster/blob/master/screen/tablayout_1.gif)
 
-圆角
+圆角+充满
 
 ![image](https://github.com/gu0-kim/IndicatorMaster/blob/master/screen/tablayout_2.gif)
 
-充满button
+直角+充满
 
 ![image](https://github.com/gu0-kim/IndicatorMaster/blob/master/screen/tablayout_3.gif)
 
