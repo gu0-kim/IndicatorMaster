@@ -1,3 +1,7 @@
+## dependencies
+```
+implementation 'com.gu:indicator:1.0.2'
+```
 ## 效果
 
 ![image](https://github.com/gu0-kim/IndicatorMaster/blob/master/screen/tablayout_1.gif)
