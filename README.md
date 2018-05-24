@@ -1,14 +1,14 @@
 ## 效果
 
-![image](tablayout_1.gif)
+![image](https://github.com/gu0-kim/IndicatorMaster/blob/master/screen/tablayout_1.gif)
 
 圆角
 
-![image](tablayout_1.gif)
+![image](https://github.com/gu0-kim/IndicatorMaster/blob/master/screen/tablayout_2.gif)
 
 充满button
 
-![image](tablayout_1.gif)
+![image](https://github.com/gu0-kim/IndicatorMaster/blob/master/screen/tablayout_3.gif)
 
 ## 简单使用
 
@@ -57,9 +57,11 @@ app:margin="24dp"
 app:rd="8dp"
 ```
 
-- 设置颜色（indicator颜色和字体颜色一致）
+- 设置颜色
 ```
 app:textColor="@color/text_state_color"
+
+//indicator颜色会自动使用text selected状态时的颜色
 ```
 res/color/text_stat_color.xml
 ```
