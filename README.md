@@ -31,12 +31,23 @@ private static final String[] titles = {"第一页", "第二页", "第三页"};
     vp.setAdapter(new PageAdapter(getSupportFragmentManager()));
     
     //TabLayout设置标题
-    mTabLayout.setTitles(titles);
-    
-    //绑定viewpager
-    mTabLayout.setViewPager(vp);
+    mTabLayout.createContentByTitles(titles).setViewPager(vp).combine();
   }
 ```
+
+## 动态修改样式
+
+```
+public void update() {
+    mTabLayout
+        .setTextColors(ContextCompat.getColorStateList(this, R.color.tab_text_state_color)) //设置text颜色
+        .setIndicatorColor(ContextCompat.getColor(this, R.color.colorPrimaryDark)) //设置indicator颜色
+        .setMargin(10) //设置边距
+        .setTextSize(14) //设置文字大小
+        .update(); //生效设置
+  }
+```
+
 ## xml文件引入
 ```
 <com.gu.indicator.TabLayout

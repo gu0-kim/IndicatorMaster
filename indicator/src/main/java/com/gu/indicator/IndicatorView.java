@@ -192,6 +192,17 @@ public class IndicatorView extends View {
     postInvalidate();
   }
 
+  /**
+   * 只更新参数，不进行postInvalidate();
+   *
+   * @param pos current pos
+   */
+  public void setParamCurrentPos(int pos) {
+    this.mPos = pos;
+    percent = 0f;
+    noAnimMoveFlag = true;
+  }
+
   public void indicator2RightNoAnim() {
     this.mPos += 1;
     percent = 0f;

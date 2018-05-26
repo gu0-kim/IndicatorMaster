@@ -24,9 +24,13 @@ public class TabLayout extends FrameLayout
     implements ViewPager.OnPageChangeListener, View.OnClickListener {
 
   private ColorStateList csl;
+
+  private int mIndicatorColor;
   private List<String> mTitles;
+
   private int margin;
   private int rd;
+  // textSize unit is sp
   private int textSize;
   private LinearLayout mContentLayout;
   private IndicatorView mIndicatorView;
@@ -103,57 +107,120 @@ public class TabLayout extends FrameLayout
     }
   }
 
+  // ------------------------------------------------------//
   public TabLayout(@NonNull Context context) {
     this(context, null);
   }
 
   public TabLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
     super(context, attrs);
+    textSize = 14;
+    csl = getResources().getColorStateList(R.color.text_state_color);
+    margin = 80;
+    mIndicatorColor = Color.RED;
+    rd = 10;
     int minHeight = context.getResources().getDimensionPixelOffset(R.dimen.min_tab_layout_height);
     if (attrs != null) {
       TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.TabLayout);
+      mIndicatorColor = a.getColor(R.styleable.TabLayout_indicatorColor, Color.RED);
       csl = a.getColorStateList(R.styleable.TabLayout_textColor);
       if (csl == null) {
         csl = getResources().getColorStateList(R.color.text_state_color);
       }
-      textSize = a.getDimensionPixelOffset(R.styleable.TabLayout_textSize, sp2px(context, 14));
+      textSize = px2sp(context, a.getDimension(R.styleable.TabLayout_textSize, 14));
       margin = a.getDimensionPixelOffset(R.styleable.TabLayout_margin, 80);
       rd = a.getDimensionPixelOffset(R.styleable.TabLayout_rd, 2);
-    } else {
-      textSize = sp2px(context, 14);
-      csl = getResources().getColorStateList(R.color.text_state_color);
-      margin = 80;
-      rd = 10;
+      a.recycle();
     }
     mTitles = new ArrayList<>();
     LayoutParams params = new LayoutParams(context, attrs);
     if (params.height < minHeight) params.height = minHeight;
     setLayoutParams(params);
-    addTabContent(context);
-    addIndicatorView(context);
+    create(true);
   }
 
-  public void setTitles(String[] titles) {
-    setTitles(titles, null);
-  }
+  public TabLayout setViewPager(ViewPager vp) {
 
-  public void setViewPager(ViewPager vp) {
     if (viewPager != null) {
       viewPager.removeOnPageChangeListener(this);
     }
     viewPager = vp;
-    viewPager.addOnPageChangeListener(this);
+    return this;
   }
 
-  public void setTitles(String[] titles, ColorStateList csl) {
+  /**
+   * 用titles数组创建TabLayout（ 更新标题时调用）
+   *
+   * @param titles 标题
+   */
+  public TabLayout createContentByTitles(String[] titles) {
     if (!mTitles.isEmpty()) {
       mTitles.clear();
     }
-    if (csl != null) this.csl = csl;
     mTitles.addAll(Arrays.asList(titles));
-    update();
+    create(false);
+    return this;
   }
 
+  /** 让viewpager的滚动与tabLayout建立联系 */
+  public void combine() {
+    if (mTitles == null || mTitles.isEmpty()) {
+      try {
+        throw new Exception("异常：combineViewPager()之前，请先设置titles！");
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+      return;
+    }
+    if (viewPager == null) {
+      try {
+        throw new Exception("异常：combineViewPager()之前，请先设置viewPager！");
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+      return;
+    }
+    viewPager.addOnPageChangeListener(this);
+  }
+
+  public TabLayout setTextColors(ColorStateList csl) {
+    this.csl = csl;
+    return this;
+  }
+
+  public TabLayout setMargin(int margin) {
+    this.margin = margin;
+    return this;
+  }
+
+  public TabLayout setRd(int rd) {
+    this.rd = rd;
+    return this;
+  }
+
+  /**
+   * 设置tab文字尺寸,单位sp
+   *
+   * @param textSize size of sp
+   * @return TabLayout
+   */
+  public TabLayout setTextSize(int textSize) {
+    this.textSize = textSize;
+    return this;
+  }
+
+  /**
+   * 设置indicatorView颜色
+   *
+   * @param indicatorColor 颜色rgb
+   * @return TabLayout
+   */
+  public TabLayout setIndicatorColor(int indicatorColor) {
+    mIndicatorColor = indicatorColor;
+    return this;
+  }
+
+  /** activity或fragment销毁时调用 */
   public void destroyView() {
     releaseListener();
     removeAllViews();
@@ -163,13 +230,41 @@ public class TabLayout extends FrameLayout
     mIndicatorView = null;
   }
 
-  private void update() {
-    releaseListener();
-    removeAllViews();
+  /**
+   * 创建一个新的
+   *
+   * @param init 是否是第一次创建
+   */
+  private void create(boolean init) {
+    if (init) {
+      releaseListener();
+      removeAllViews();
+    }
     addTabContent(getContext());
-    addIndicatorView(getContext());
+    addIndicatorView(getContext(), 0);
   }
 
+  /** 更新属性 */
+  public void update() {
+    int pos = 0;
+    if (mContentLayout != null) {
+      for (int i = 0; i < mContentLayout.getChildCount(); i++) {
+        TextView textView = (TextView) mContentLayout.getChildAt(i);
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize);
+        textView.setTextColor(csl);
+        if (textView.isSelected()) pos = i;
+      }
+      mContentLayout.invalidate();
+    }
+    addIndicatorView(getContext(), pos);
+    invalidate();
+  }
+
+  /**
+   * 添加tab item
+   *
+   * @param context 上下文
+   */
   private void addTabContent(Context context) {
     if (mTitles == null || mTitles.isEmpty()) return;
     if (mContentLayout != null) {
@@ -186,7 +281,7 @@ public class TabLayout extends FrameLayout
       textView.setLayoutParams(new LinearLayout.LayoutParams(0, LayoutParams.MATCH_PARENT, 1.0f));
       textView.setGravity(Gravity.CENTER);
       textView.setText(mTitles.get(i));
-      textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
+      textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize);
       textView.setTag(i);
       textView.setTextColor(csl);
       textView.setOnClickListener(this);
@@ -196,21 +291,28 @@ public class TabLayout extends FrameLayout
     addView(mContentLayout);
   }
 
-  private void addIndicatorView(Context context) {
+  /**
+   * 添加indicatorView
+   *
+   * @param context 上下文
+   * @param pos 出现的位置
+   */
+  private void addIndicatorView(Context context, int pos) {
     if (mTitles == null || mTitles.isEmpty()) return;
     if (mIndicatorView != null) removeView(mIndicatorView);
     mIndicatorView = new IndicatorView(context);
     mIndicatorView.setNum(mTitles.size());
     mIndicatorView.setMargin(margin);
     mIndicatorView.setRoundCorner(rd);
-    mIndicatorView.setIndicatorColor(
-        csl.getColorForState(new int[] {android.R.attr.state_selected}, Color.BLUE));
+    mIndicatorView.setIndicatorColor(mIndicatorColor);
+    mIndicatorView.setParamCurrentPos(pos);
     LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 10);
     params.gravity = Gravity.BOTTOM;
     mIndicatorView.setLayoutParams(params);
     addView(mIndicatorView);
   }
 
+  /** 释放listeners */
   private void releaseListener() {
     int size = mTitles == null ? 0 : mTitles.size();
     for (int i = 0; i < size; i++) {
@@ -222,8 +324,8 @@ public class TabLayout extends FrameLayout
     }
   }
 
-  public static int sp2px(Context context, float spValue) {
+  public static int px2sp(Context context, float pxValue) {
     final float fontScale = context.getResources().getDisplayMetrics().scaledDensity;
-    return (int) (spValue * fontScale + 0.5f);
+    return (int) (pxValue / fontScale + 0.5f);
   }
 }
