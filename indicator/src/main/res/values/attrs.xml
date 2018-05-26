@@ -6,6 +6,7 @@
     <attr name="rd" format="dimension" />
     <attr name="textColor" format="color" />
     <attr name="textSize" format="dimension" />
+    <attr name="indicatorColor" format="color" />
 
     <declare-styleable name="IndicatorView">
         <attr name="num" />
@@ -18,6 +19,7 @@
         <attr name="textSize" />
         <attr name="margin" />
         <attr name="rd" />
+        <attr name="indicatorColor" />
     </declare-styleable>
 
 </resources>

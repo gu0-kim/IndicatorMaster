@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 
@@ -11,6 +12,7 @@ import com.gu.indicator.TabLayout;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity {
   private static final String[] titles = {"第一页", "第二页", "第三页"};
@@ -28,8 +30,17 @@ public class MainActivity extends AppCompatActivity {
     ButterKnife.bind(this);
     vp.setAdapter(new PageAdapter(getSupportFragmentManager()));
     // TabLayout使用
-    mTabLayout.setTitles(titles);
-    mTabLayout.setViewPager(vp);
+    mTabLayout.createContentByTitles(titles).setViewPager(vp).combine();
+  }
+
+  @OnClick(R.id.updateBtn)
+  public void update() {
+    mTabLayout
+        .setTextColors(ContextCompat.getColorStateList(this, R.color.tab_text_state_color))
+        .setIndicatorColor(ContextCompat.getColor(this, R.color.colorPrimaryDark))
+        .setMargin(10)
+        .setTextSize(14)
+        .update();
   }
 
   @Override

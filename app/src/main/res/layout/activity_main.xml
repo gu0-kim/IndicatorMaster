@@ -11,10 +11,17 @@
         android:layout_height="40dp"
         android:layout_marginLeft="60dp"
         android:layout_marginRight="60dp"
+        app:indicatorColor="@color/deep_orange_500"
         app:margin="0dp"
         app:rd="0dp"
-        app:textColor="@color/text_state_color"
+        app:textColor="@color/tab_text_state_color"
         app:textSize="14sp" />
+
+    <Button
+        android:id="@+id/updateBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="update" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/vp"
